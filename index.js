@@ -130,94 +130,59 @@ function show_todos(todos_arr) {
     }
 }
 
-async function PromiseAPI1() {
-    let promise = new Promise((resolve, rejects) => {
-        setTimeout(async () => {
-            try {
-                let response = await fetch("https://dummyjson.com/posts");
+
+
+function func_with_delay_time2(api, delay_time) {
+    return new Promise((resolve, rejects) => {
+        try {
+            setTimeout(async () => {
+                let response = await fetch(api);
                 let data = await response.json();
-                // console.log(data);
                 resolve(data);
-            } catch (err) {
-                // console.log(err);
-                rejects(`err in PromiseAPI1 ${err}`);
-            }
-
-
-        }, 1000)
-    })
-    return promise;
-}
-
-async function PromiseAPI2() {
-    let promise = new Promise((resolve, rejects) => {
-        setTimeout(async () => {
-            try {
-                let response = await fetch("https://dummyjson.com/products");
-                let data = await response.json();
-                // console.log(data);
-                resolve(data);
-
-            } catch (err) {
-                // console.log(err);
-                rejects(`err in PromiseAPI2 ${err}`);
-
-            }
-
-        }, 2000)
-    })
-    return promise;
-}
-
-async function PromiseAPI3() {
-    let promise = new Promise((resolve, rejects) => {
-        setTimeout(async () => {
-            try {
-                let response = await fetch("https://dummyjson.com/todos");
-                let data = await response.json();
-                // console.log(data);
-                resolve(data);
-            } catch (err) {
-                // console.log(err)
-                rejects(`err in PromiseAPI3 ${err}`);
-
-            }
-
-
-        }, 3000)
-    })
-    return promise;
-}
-
-async function promise_chaining_start() {
-    try {
-
-        let data1 = await PromiseAPI1();
-        // console.log(data1.posts)
-        show_post(data1.posts)
-
-
-        if (data1) {
-            let data2 = await PromiseAPI2();
-            // console.log(data2.products)
-
-            show_products(data2.products)
-
-
-            if (data2) {
-                let data3 = await PromiseAPI3();
-                // console.log(data3.todos)
-                show_todos(data3.todos)
-
-            }
+            }, delay_time)
+        } catch (err) {
+            rejects(err);
         }
-    } catch (err) {
-        console.log("something went wrong!", err);
-    }
-
-
+    })
 }
-document.getElementById("btn").addEventListener("click", promise_chaining_start)
+
+
+document.getElementById("btn").addEventListener("click", () => {
+    func_with_delay_time("https://dummyjson.com/posts", 1000)
+        .then((data => {
+            console.log(data);
+            show_post(data.posts)
+
+            return func_with_delay_time("https://dummyjson.com/products", 2000)
+
+        })).then(data => {
+            console.log(data);
+            show_products(data.products)
+
+            return func_with_delay_time("https://dummyjson.com/todos", 3000)
+
+        }).then(data => {
+            console.log(data);
+            show_todos(data.todos)
+
+        }).catch(err => {
+            console.log(err);
+
+        })
+
+})
+
+
+function func_with_delay_time(api, delay_time) {
+    return new Promise((resolve, rejects) => {
+        setTimeout(() => {
+            fetch(api)
+                .then(response => response.json())
+                .then(data => resolve(data))
+                .catch(err => rejects(err));
+        }, delay_time)
+    })
+}
 
 
 
@@ -232,40 +197,3 @@ document.getElementById("btn").addEventListener("click", promise_chaining_start)
 
 
 
-
-
-// async function PromiseAPI1()
-// {
-//         setTimeout(()=>{
-//             fetch("https://dummyjson.com/posts").then(response=>{
-//                 return response.json();
-//             }).then(data=>{
-//                 return data;
-//             })
-//         },1000)
-// }
-/*
-  <div class="product">
-                <div>Samsung Galaxy Book</div>
-                <img src="https://i.dummyjson.com/data/products/7/thumbnail.jpg" alt="">
-                <div>Samsung Galaxy Book S (2020) Laptop With Intel Lakefield Chip, 8GB of RAM Launched</div>
-                <div class="prod_info">
-                    <div>
-                        <div>price: 1499</div>
-                        <div>discount:4.15%</div>
-                        <div>rating:4.25</div>
-                    </div>
-
-                    <div>
-                        <div>stock:50</div>
-                        <div>brand: Samsung</div>
-                        <div>category: laptops</div>
-                    </div>
-                </div>
-                <!-- <div>
-                    <img src="https://i.dummyjson.com/data/products/7/1.jpg" alt="">
-                    <img src="https://i.dummyjson.com/data/products/7/2.jpg" alt="">
-                    <img src="https://i.dummyjson.com/data/products/7/3.jpg" alt="">
-                    <img src="https://i.dummyjson.com/data/products/7/thumbnail.jpg" alt="">
-                </div> -->
-            </div>*/
